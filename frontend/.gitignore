@@ -1,0 +1,7 @@
+node_modules/
+build/
+.env.local
+.env.development
+.env.production
+package-lock.json
+.DS_Store
