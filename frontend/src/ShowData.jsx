@@ -10,7 +10,7 @@ const ShowData = () => {
   const handleDelete = async () => {
     if (!selectId) return;
     try {
-      const url = "http://localhost:3000/deleteData";
+      const url = "https://studyguidex.onrender.com/deleteData";
       await axios.delete(url, { data: { id: selectId } });
       setData((prev) => prev.filter((e) => e._id !== selectId));
       setSelectId(null);
@@ -22,7 +22,7 @@ const ShowData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const url = "http://localhost:3000/getData";
+        const url = "https://studyguidex.onrender.com/getData";
         const response = await axios.get(url);
         setData(response.data.data);
       } catch (error) {

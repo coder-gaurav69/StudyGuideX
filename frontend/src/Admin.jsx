@@ -15,7 +15,7 @@ const Admin = () => {
   const handleForm = async (e) => {
     e.preventDefault();
     try {
-      const url = "http://localhost:3000/postData";
+      const url = "https://studyguidex.onrender.com/postData";
       const formData = new FormData();
       formData.append("subject", subject);
       formData.append("branch", branch);
