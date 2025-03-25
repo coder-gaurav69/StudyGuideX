@@ -10,7 +10,7 @@ const ShowData = () => {
   const handleDelete = async () => {
     if (!selectId) return;
     try {
-      const url = "https://studyguidex.onrender.com/deleteData";
+      const url = `${process.env.REACT_APP_BACKEND_URL}/deleteData`;
       await axios.delete(url, { data: { id: selectId } });
       setData((prev) => prev.filter((e) => e._id !== selectId));
       setSelectId(null);
@@ -22,7 +22,7 @@ const ShowData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const url = "https://studyguidex.onrender.com/getData";
+        const url = `${process.env.REACT_APP_BACKEND_URL}/getData`;
         const response = await axios.get(url);
         setData(response.data.data);
       } catch (error) {
@@ -37,6 +37,10 @@ const ShowData = () => {
       handleDelete();
     }
   }, [selectId]);
+
+  useEffect(()=>{
+    console.log(process.env.REACT_APP_BACKEND_URL)
+  },[])
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-gray-200 p-5">
