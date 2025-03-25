@@ -51,7 +51,7 @@ const ShowData = () => {
           Home
         </button>
         <div className="mt-6 space-y-4">
-          {data.map((e, id) => (
+          {data && data.map((e, id) => (
             <div key={id} className="p-4 bg-gray-50 rounded-lg shadow-md border relative">
               <button
                 className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600"
