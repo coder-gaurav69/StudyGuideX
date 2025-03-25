@@ -40,7 +40,7 @@ const ShowData = () => {
   }, [selectId]);
 
   useEffect(()=>{
-    console.log(process.env.VITE_API_BACKEND_URL)
+    console.log(import.meta.env.VITE_API_URL)
   },[])
 
   return (
