@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import upload from "./cloudinary.js";
+import {upload,deleteFile} from "./cloudinary.js";
 import { connectMONGODB } from "./mongoDB.js";
 import paper from "./Schema/PaperSchema.js";
 
@@ -38,22 +38,31 @@ app.get("/getData", async (req, res) => {
   }
 });
 
-// ✅ Delete a file by ID
-app.delete("/deleteData", async (req, res) => {
-  const selectedItem = req.body.id;
-  if (!selectedItem)
+//Delete a file by ID , can also use endPoint like this "/delete/:publicId/:fileType/:id"
+app.delete("/delete", async (req, res) => {
+  
+  const {id,publicId,fileType} = req.body;
+
+  // const {publicId,fileType,id} = req.params;
+
+  if (!id)
     return res
       .status(400)
       .json({ message: "ID is required", status: "not ok", statusCode: 400 });
 
   try {
-    const deletedItem = await paper.findById(selectedItem);
+    const deletedItem = await paper.findById({_id:id});
     if (!deletedItem)
       return res
         .status(404)
         .json({ message: "Item not found", status: "not ok", statusCode: 404 });
 
-    await paper.deleteOne({ _id: selectedItem });
+    // ye mongoDb se udayega
+    await paper.deleteOne({ _id: id });
+
+    // ye cloudinary(cloud service) se udayega
+    await deleteFile(publicId,fileType);
+
     res.json({
       message: "Deleted successfully",
       status: "ok",
@@ -70,7 +79,7 @@ app.delete("/deleteData", async (req, res) => {
   }
 });
 
-// ✅ Upload File Route (Images/Videos)
+// Post request for uploading file in moongoose and cloud service
 app.post("/postData", upload.single("file"), async (req, res) => {
   if (!req.file) return res.status(400).json({ message: "No file uploaded" });
 
@@ -90,15 +99,17 @@ app.post("/postData", upload.single("file"), async (req, res) => {
         statusCode: 409,
       });
 
-    const paperDocument = new paper({
-      subject: req.body.subject,
-      description: req.body.description,
-      year: req.body.year,
-      branch: req.body.branch,
-      pages: req.body.pages,
-      fileName: req.file.originalname,
-      file: req.file.path,
-    });
+      const paperDocument = new paper({
+        subject: req.body.subject,
+        description: req.body.description,
+        year: req.body.year,
+        branch: req.body.branch,
+        pages: req.body.pages,
+        fileName: req.file.originalname,
+        fileUrl: req.file.path,
+        fileType: req.file.mimetype.split("/")[0],
+        publicId: req.file.filename,
+      });
 
     const response = await paperDocument.save();
     res.json({
@@ -110,7 +121,7 @@ app.post("/postData", upload.single("file"), async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-      message: "Failed to receive",
+      message: "Internal Server Error",
       status: "not ok",
       statusCode: 500,
       error: error.message,

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Loader from "./loader";
 
 const Admin = () => {
   const [file, setFile] = useState(null);
@@ -10,11 +11,13 @@ const Admin = () => {
   const [description, setDescription] = useState(null);
   const [pages, setPages] = useState(null);
   const [message, setMessage] = useState(null);
+  const [loader, setLoader] = useState(false);
   const navigate = useNavigate();
 
   const handleForm = async (e) => {
     e.preventDefault();
     try {
+      setLoader(true);
       const url = `${import.meta.env.VITE_API_BACKEND_URL}/postData`;
       const formData = new FormData();
       formData.append("subject", subject);
@@ -23,19 +26,20 @@ const Admin = () => {
       formData.append("description", description);
       formData.append("pages", pages);
       if (file) formData.append("file", file);
-
       const result = await axios.post(url, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-
       const msg = result.data?.message;
+      // console.log(msg)
       setMessage(msg);
+      setLoader(false);
       handleMessage();
     } catch (error) {
       const errorMsg = error.response?.data?.message;
       setMessage(errorMsg);
+      setLoader(false);
     }
   };
 
@@ -47,12 +51,17 @@ const Admin = () => {
       setPages(null);
       setSubject(null);
       setDescription(null);
-      document.getElementById("fileField").value = "";
+      setFile(null);
+  
+      const fileInput = document.getElementById("fileField");
+      if (fileInput) fileInput.value = "";
+  
       document.querySelectorAll(".inputField").forEach((e) => {
         e.value = "";
       });
-    }, 5000);
+    }, 3000);
   };
+  
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6">
@@ -119,6 +128,8 @@ const Admin = () => {
               {message}
             </div>
           )}
+
+          {loader && <Loader />}
 
           <button
             type="submit"

@@ -6,7 +6,7 @@ import { config } from "dotenv";
 config();
 
 cloudinary.config({
-  cloud_name: "dwdzv9jjo",
+  cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.API_KEY,
   api_secret: process.env.API_SECRET,
 });
@@ -27,5 +27,23 @@ const storage = new CloudinaryStorage({
   },
 });
 
+const deleteFile = async (publicId, fileType) => {
+  try {
+    let resourceType = "raw"; // Default type for PDFs and other files
+
+    if (fileType === "image") {
+      resourceType = "image";
+    } else if (fileType === "video" || fileType === "audio") {
+      resourceType = "video"; // Cloudinary treats audio as video for deletion
+    }
+
+    const result = await cloudinary.uploader.destroy(publicId, { resource_type: resourceType });
+    console.log(`Deleted ${fileType}:`, result);
+    return result;
+  } catch (error) {
+    console.error(`Error deleting ${fileType}:`, error);
+  }
+};
+
 const upload = multer({ storage });
-export default upload;
+export {upload,deleteFile};
