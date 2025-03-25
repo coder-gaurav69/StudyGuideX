@@ -10,7 +10,7 @@ const ShowData = () => {
   const handleDelete = async () => {
     if (!deleteItem) return;
     try {
-
+      
       const url = `${import.meta.env.VITE_API_BACKEND_URL}/delete`;
 
       // in this passing data in the form of url
@@ -30,8 +30,6 @@ const ShowData = () => {
       console.log(error);
     }
   };
-
-  
 
   useEffect(() => {
     const fetchData = async () => {

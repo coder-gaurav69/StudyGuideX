@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Loader from "./loader";
+import Loader from './Loader.jsx'
+
 
 const Admin = () => {
   const [file, setFile] = useState(null);
@@ -32,7 +33,6 @@ const Admin = () => {
         },
       });
       const msg = result.data?.message;
-      // console.log(msg)
       setMessage(msg);
       setLoader(false);
       handleMessage();
@@ -129,7 +129,7 @@ const Admin = () => {
             </div>
           )}
 
-          {loader && <Loader />}
+          {loader && <Loader/>}
 
           <button
             type="submit"
