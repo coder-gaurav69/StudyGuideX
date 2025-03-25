@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+
 const ShowData = () => {
   const [data, setData] = useState([]);
   const [selectId, setSelectId] = useState(null);
@@ -10,7 +11,7 @@ const ShowData = () => {
   const handleDelete = async () => {
     if (!selectId) return;
     try {
-      const url = `${process.env.REACT_APP_BACKEND_URL}/deleteData`;
+      const url = `${import.meta.env.VITE_API_URL}/deleteData`;
       await axios.delete(url, { data: { id: selectId } });
       setData((prev) => prev.filter((e) => e._id !== selectId));
       setSelectId(null);
@@ -22,7 +23,7 @@ const ShowData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const url = `${process.env.REACT_APP_BACKEND_URL}/getData`;
+        const url = `${import.meta.env.VITE_API_URL}/getData`;
         const response = await axios.get(url);
         setData(response.data.data);
       } catch (error) {
@@ -39,7 +40,7 @@ const ShowData = () => {
   }, [selectId]);
 
   useEffect(()=>{
-    console.log(process.env.REACT_APP_BACKEND_URL)
+    console.log(process.env.VITE_API_BACKEND_URL)
   },[])
 
   return (
