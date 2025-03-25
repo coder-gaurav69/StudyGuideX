@@ -9,7 +9,7 @@ dotenv.config();
 
 const app = express();
 app.use(
-  cors({ methods: ["POST", "GET", "DELETE"], origin: "*", credentials: true })
+  cors({ methods: ["POST", "GET", "DELETE"], origin:process.env.FRONTEND_URL, credentials: true })
 );
 app.use(express.json());
 
