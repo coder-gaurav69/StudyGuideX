@@ -11,7 +11,7 @@ const ShowData = () => {
   const handleDelete = async () => {
     if (!selectId) return;
     try {
-      const url = `${import.meta.env.VITE_API_URL}/deleteData`;
+      const url = `${import.meta.env.VITE_API_BACKEND_URL}/deleteData`;
       await axios.delete(url, { data: { id: selectId } });
       setData((prev) => prev.filter((e) => e._id !== selectId));
       setSelectId(null);
@@ -23,7 +23,7 @@ const ShowData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const url = `${import.meta.env.VITE_API_URL}/getData`;
+        const url = `${import.meta.env.VITE_API_BACKEND_URL}/getData`;
         const response = await axios.get(url);
         setData(response.data.data);
       } catch (error) {
@@ -40,7 +40,7 @@ const ShowData = () => {
   }, [selectId]);
 
   useEffect(()=>{
-    console.log(import.meta.env.VITE_API_URL)
+    console.log(import.meta.env.VITE_API_BACKEND_URL)
   },[])
 
   return (

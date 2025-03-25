@@ -15,7 +15,7 @@ const Admin = () => {
   const handleForm = async (e) => {
     e.preventDefault();
     try {
-      const url = `${import.meta.env.VITE_API_URL}/postData`;
+      const url = `${import.meta.env.VITE_API_BACKEND_URL}/postData`;
       const formData = new FormData();
       formData.append("subject", subject);
       formData.append("branch", branch);
