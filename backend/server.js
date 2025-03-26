@@ -83,12 +83,7 @@ app.delete("/delete", async (req, res) => {
 app.post("/postData", upload.single("file"), async (req, res) => {
   if (!req.file) return res.status(400).json({ message: "No file uploaded" });
 
-  const [fileType, fileExtension] = req.file.mimetype.split("/");
-  if (fileExtension === "mpeg" || fileExtension === "mp4") {
-    return res.status(400).json({
-      message: "Only pdf,jpg,jpeg,png allowed",
-    });
-  }
+  
 
   try {
     const check = await paper.findOne({ fileName: req.file.originalname });

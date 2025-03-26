@@ -16,9 +16,27 @@ const Admin = () => {
 
   const handleForm = async (e) => {
     e.preventDefault();
+    setMessage(null);
+    setLoader(true);
+
     try {
-      setMessage(null);
-      setLoader(true);
+      // Validate file type
+      if (!file) {
+        setMessage("Please select a file");
+        setLoader(false);
+        return;
+      }
+
+      const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+      if (!allowedTypes.includes(file.type)) {
+        setMessage('Please upload only PDF or image files (JPEG, PNG, JPG)');
+        setFile(null); // Clear invalid file
+        setLoader(false);
+        const fileInput = document.getElementById("fileField");
+        if (fileInput) fileInput.value = "";
+        return;
+      }
+
       const url = `${import.meta.env.VITE_API_BACKEND_URL}/postData`;
       const formData = new FormData();
       formData.append("subject", subject);
@@ -26,18 +44,20 @@ const Admin = () => {
       formData.append("year", year);
       formData.append("description", description);
       formData.append("pages", pages);
-      if (file) formData.append("file", file);
+      formData.append("file", file);
+
       const result = await axios.post(url, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
+
       const msg = result.data?.message;
       setMessage(msg);
       setLoader(false);
       handleMessage();
     } catch (error) {
-      const errorMsg = error.response?.data?.message;
+      const errorMsg = error.response?.data?.message || "An error occurred during upload";
       setMessage(errorMsg);
       setLoader(false);
     }
@@ -50,7 +70,6 @@ const Admin = () => {
       setDescription(null);
       setPages(null);
       setSubject(null);
-      setDescription(null);
       setFile(null);
   
       const fileInput = document.getElementById("fileField");
@@ -60,6 +79,27 @@ const Admin = () => {
         e.value = "";
       });
     }, 3000);
+  };
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg','image/gif','image/bmp','image/webp','image/tiff'];
+      if (!allowedTypes.includes(selectedFile.type)) {
+        setMessage('Please select only PDF or image files (JPEG, PNG, JPG)');
+        setFile(null);
+        e.target.value = "";
+        return;
+      }
+      if(selectedFile.size > 10*1024*1024){
+        setMessage('File size must be under 10MB.');
+        setFile(null);
+        e.target.value = "";
+        return;
+      }
+      setFile(selectedFile);
+      setMessage(null);
+    }
   };
 
   return (
@@ -110,7 +150,7 @@ const Admin = () => {
 
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">
-                Upload File
+                Upload File (PDF or Image only)
               </label>
               <div className="relative">
                 <label
@@ -129,7 +169,8 @@ const Admin = () => {
                   id="fileField"
                   type="file"
                   className="hidden"
-                  onChange={(e) => setFile(e.target.files[0])}
+                  accept=".pdf,image/jpeg,image/png,image/jpg,image/gif,image/bmp,image/webp,image/tiff"
+                  onChange={handleFileChange}
                   required
                 />
                 {file && (
