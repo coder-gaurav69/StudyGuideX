@@ -4,22 +4,19 @@ import { useNavigate } from "react-router-dom";
 
 const ShowData = () => {
   const [data, setData] = useState([]);
-  const [deleteItem, setDeleteItem] = useState(null);
   const navigate = useNavigate();
 
-  const handleDelete = async () => {
-    if (!deleteItem) return;
+  const handleDelete = async (item) => {
     try {
       const url = `${import.meta.env.VITE_API_BACKEND_URL}/delete`;
       await axios.delete(url, {
         data: {
-          id: deleteItem._id,
-          publicId: deleteItem.publicId,
-          fileType: deleteItem.fileType,
+          id:item._id,
+          questionPaper:item.questionPaper,
+          paperSolution: item.paperSolution,
         },
       });
-      setData((prev) => prev.filter((e) => e._id !== deleteItem._id));
-      setDeleteItem(null);
+      setData((prev) => prev.filter((e) => e._id !== item._id));
     } catch (error) {
       console.log(error);
     }
@@ -28,7 +25,7 @@ const ShowData = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const url = `${import.meta.env.VITE_API_BACKEND_URL}/getData`;
+        const url = `${import.meta.env.VITE_API_BACKEND_URL}/getData/fullData`;
         const response = await axios.get(url);
         setData(response.data.data);
       } catch (error) {
@@ -36,16 +33,6 @@ const ShowData = () => {
       }
     };
     fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (deleteItem) {
-      handleDelete();
-    }
-  }, [deleteItem]);
-
-  useEffect(() => {
-    console.log(import.meta.env.VITE_API_BACKEND_URL);
   }, []);
 
   return (
@@ -73,20 +60,24 @@ const ShowData = () => {
                 No data available
               </div>
             ) : (
-              data.map((e, id) => (
+              data.map((e) => (
                 <div
-                  key={id}
-                  className="relative bg-white rounded-xl shadow-md p-6 border border-gray-100 
-                    hover:shadow-lg transition-all duration-300"
+                  key={e._id}
+                  className="relative bg-white rounded-xl shadow-md p-6 border border-gray-100 hover:shadow-lg transition-all duration-300"
                 >
                   <button
                     className="absolute top-3 right-3 z-10 flex items-center justify-center w-8 h-8 bg-red-500 
                       text-white rounded-full hover:bg-red-600 transition-all duration-200 shadow-sm 
                       hover:scale-110"
-                    onClick={() => setDeleteItem(e)}
+                    onClick={() => handleDelete(e)}
                     title="Delete item"
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -96,9 +87,9 @@ const ShowData = () => {
                     </svg>
                   </button>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <h2 className="text-xl font-semibold text-gray-800">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-5">
+                      <h2 className="text-md  font-semibold text-gray-800">
                         {e.subject}
                       </h2>
                       <div className="text-gray-600 space-y-1">
@@ -106,40 +97,39 @@ const ShowData = () => {
                           <span className="font-medium">Branch:</span> {e.branch}
                         </p>
                         <p>
+                          <span className="font-medium">Semester:</span> {e.semester}
+                        </p>
+                        <p>
                           <span className="font-medium">Year:</span> {e.year}
                         </p>
-                        <p>
-                          <span className="font-medium">Pages:</span> {e.pages}
-                        </p>
-                        <p>
-                          <span className="font-medium">File:</span> {e.fileName}
-                        </p>
                       </div>
-                      <p className="text-gray-500 italic">
-                        {e.description}
-                      </p>
                     </div>
 
-                    <div className="mt-4 md:mt-0">
-                      {!["pdf"].includes(e.fileName.split(".").pop()) && (
-                        <img
-                          src={e.fileUrl}
-                          alt="uploaded file"
-                          className="w-full h-48 object-cover rounded-lg shadow-sm"
-                        />
-                      )}
-                      {e.fileName.endsWith(".pdf") && (
-                        <div className="relative w-full h-64 overflow-hidden rounded-lg shadow-sm">
-                          <iframe
-                            src={e.fileUrl}
-                            width="100%"
-                            height="100%"
-                            className="absolute inset-0"
-                            title={e.fileName}
-                          />
+                    {["questionPaper", "paperSolution"].map((val, index) => {
+                      const fileType = e[val]?.fileName?.split(".").pop();
+                      return (
+                        <div className="mt-4 md:mt-0" key={index}>
+                          {fileType && fileType !== "pdf" && (
+                            <img
+                              src={e[val].fileUrl}
+                              alt="uploaded file"
+                              className="w-full h-48 object-cover rounded-lg shadow-sm"
+                            />
+                          )}
+                          {fileType === "pdf" && (
+                            <div className="relative w-full h-64 overflow-hidden rounded-lg shadow-sm">
+                              <iframe
+                                src={e[val].fileUrl}
+                                width="100%"
+                                height="100%"
+                                className="absolute inset-0"
+                                title={e[val].fileName}
+                              />
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
+                      );
+                    })}
                   </div>
                 </div>
               ))

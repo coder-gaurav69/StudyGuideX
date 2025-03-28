@@ -2,16 +2,24 @@ import mongoose from "mongoose";
 
 const paperSchema = new mongoose.Schema({
   subject: { type: String, required: true },
-  description: { type: String, required: true },
-  year: { type: Number, required: true },
+  year: { type: String, required: true },
   branch: { type: String, required: true },
-  pages: { type: Number },
-  fileName: { type: String, required: true },
-  fileType:{type:String,require:true},
-  publicId:{type:String,require:true},
-  fileUrl: { type: String, required: true },
-  uploadedAt: { type: Date, default: Date.now },
+  semester: { type: String, required: true },
+  paperCategory :{ type: String, required: true },
+  questionPaper: {
+    fileName: { type: String, required: true },
+    fileUrl: { type: String, required: true },
+    fileType: { type: String, required: true },
+    publicId: { type: String, required: true, unique: true },
+  },
+  paperSolution: {
+    fileName: { type: String, required: true },
+    fileUrl: { type: String, required: true },
+    fileType: { type: String, required: true },
+    publicId: { type: String, required: true, unique: true },
+  },
 });
 
 const paper = mongoose.model("paperSolution", paperSchema);
+
 export default paper;

@@ -19,12 +19,13 @@ const storage = new CloudinaryStorage({
 
     return {
       folder: "uploads",
-      format: fileExtension === 'mpeg' ? 'mp3' : fileExtension, 
-      resource_type: fileType === 'image' ? 'image' : 'raw', // Explicitly set images as 'image'
-      public_id: file.originalname.split(".").slice(0, -1).join("."),
+      format: fileExtension === 'mpeg' ? 'mp3' : fileExtension,
+      resource_type: fileType === 'image' ? 'image' : 'raw',  // Let Cloudinary decide for non-image files
+      public_id: file.originalname.split(".").slice(0, -1).join(".") + "-" + Date.now(), // Unique ID
     };
   },
 });
+
 
 
 const deleteFile = async (publicId, fileType) => {
@@ -46,4 +47,5 @@ const deleteFile = async (publicId, fileType) => {
 };
 
 const upload = multer({ storage,limits:{fileSize:10*1024*1024} });
+
 export {upload,deleteFile};
