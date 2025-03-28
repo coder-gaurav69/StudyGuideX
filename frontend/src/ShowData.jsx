@@ -40,11 +40,11 @@ const ShowData = () => {
       <div className="max-w-4xl mx-auto">
         <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl p-6 border border-gray-100/50">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
               All Resources
             </h1>
             <button
-              className="group relative px-6 py-2.5 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white 
+              className="text-[14px] sm:text-[16px] group relative px-3 py-2.5 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white 
                 font-medium hover:from-blue-700 hover:to-indigo-700 transform hover:-translate-y-1 
                 transition-all duration-300 shadow-md"
               onClick={() => navigate("/")}
@@ -113,7 +113,7 @@ const ShowData = () => {
                             <img
                               src={e[val].fileUrl}
                               alt="uploaded file"
-                              className="w-full h-48 object-cover rounded-lg shadow-sm"
+                              className="w-full h-64 object-cover rounded-lg shadow-sm"
                             />
                           )}
                           {fileType === "pdf" && (
